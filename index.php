@@ -25,7 +25,7 @@ array(3) {
   string(4) "true"
 }
 */
-echo "You must go on " . $authorize_url . '?oauth_token=' . $request_token['oauth_token'] . "1\n";
+echo "You must go on " . $authorize_url . '?oauth_token=' . $request_token['oauth_token'] . "\n";
 
 echo "Please give PIN number: ";
 $fp = fopen('php://stdin', 'r');
