@@ -39,7 +39,7 @@ class Twitter
 
         $params = array_merge($params, $twitter_params);
 
-        $signature = $oa->buildSignature($this->consumer_secret . '' . $this->oauth_token_secret, $method, $url, $params);
+        $signature = $oa->buildSignature($this->consumer_secret . '&' . $this->oauth_token_secret, $method, $url, $params);
         $params['oauth_signature'] = $signature;
 
         $ret = $oa->request( $url . '?' . http_build_query($twitter_params, '', '&'), 'POST', NULL, $oa->makeAuthorization($params) );
