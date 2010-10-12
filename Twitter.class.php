@@ -46,4 +46,39 @@ class Twitter
 
         return $ret;
     }
+
+    public function getSampleFirehose()
+    {
+        $url = 'http://stream.twitter.com/1/statuses/sample.json';
+        $method = 'GET';
+
+        $oa = new OAuth($this->consumer_key, $this->consumer_secret);
+        $nonce = sha1('nonce' + time());
+        $params = array(
+                    'oauth_consumer_key' => $this->consumer_key,
+                    'oauth_nonce' => $nonce,
+                    'oauth_signature_method' => 'HMAC-SHA1',
+                    'oauth_timestamp' => time(),
+                    'oauth_version' => '1.0',
+                    'oauth_token' => $this->oauth_token,
+                  );
+
+        $twitter_params = array();
+
+        $params = array_merge($params, $twitter_params);
+
+        $signature = $oa->buildSignature($this->consumer_secret . '&' . $this->oauth_token_secret, $method, $url, $params);
+        $params['oauth_signature'] = $signature;
+
+        $fullurl = $url . '?' . http_build_query($params, '', '&');
+
+        $fd = fopen($fullurl, 'r');
+
+        return $fd;
+    }
+
+    public function closeSampleFirehose($fd)
+    {
+        fclose($fd);
+    }
 };
