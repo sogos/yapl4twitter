@@ -1,0 +1,40 @@
+Use:
+
+$ git clone git://github.com/mycroft/YeyAnotherTwitterPhpLib.git
+Cloning into YeyAnotherTwitterPhpLib...
+remote: Counting objects: 19, done.
+remote: Compressing objects: 100% (18/18), done.
+remote: Total 19 (delta 8), reused 0 (delta 0)
+Receiving objects: 100% (19/19), done.
+Resolving deltas: 100% (8/8), done.
+
+Create your application in twitter, modify cs_key and cs_secret according what given by
+twitter (http://dev.twitter.com/):
+
+$cs_key = 'YM0fEbi6I65fuUNmlZtLQ';
+$cs_secret = 'qSms4bOFVK3JdEXCrViFQ[...]';
+
+
+Run index.php through CLI (because the callback url si 'oob', as it was a desktop client. You can put a valid url, but you'll have to create your own scripts to handle authentification.):
+
+$ php index.php
+You must go on https://api.twitter.com/oauth/authorize?oauth_token=rKWDVy8rDQSuE0n914FicpIpey5TMYGbNW7urDzwOVw
+Please give PIN number: 0236794
+
+(Copy/paste given url, accept application, copy/paste given pin)
+
+Given access_token will return infos:
+
+array(4) {
+  ["oauth_token"]=>
+  string(49) "6854032-..."
+  ["oauth_token_secret"]=>
+  string(43) "..."
+  ["user_id"]=>
+  string(7) "6854032"
+  ["screen_name"]=>
+  string(7) "mycroft"
+}
+
+OR use web_sample.php, replace keys and callback url, and run it with your browser.
+
