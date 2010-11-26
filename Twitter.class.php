@@ -113,6 +113,19 @@ class Twitter
         return $rep;
     }
 
+    public function get_list_members($screen_name, $list_slug, $cursor = -1)
+    {
+        $url = 'http://api.twitter.com/1/' . $screen_name . '/' . $list_slug . '/members.json';
+        $method = 'GET';
+
+        $twitter_params = array('list_id' => $list_slug, 'cursor' => $cursor, 'include_entities' => FALSE);
+
+        $rep = $this->request( $url, $method, $twitter_params );
+
+        return $rep;
+    }
+
+
     public function getSampleFirehose()
     {
         $url = 'http://stream.twitter.com/1/statuses/sample.json';
