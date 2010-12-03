@@ -5,10 +5,16 @@ class OAuth
     private $consumer_key = NULL;
     private $consumer_secret = NULL;
 
-    public function OAuth($consumer_key, $consumer_secret)
+    private $oauth_token = NULL;
+    private $oauth_token_secret = NULL;
+
+    public function OAuth($consumer_key, $consumer_secret, $oauth_token = NULL, $oauth_token_secret = NULL)
     {
         $this->consumer_key = $consumer_key;
         $this->consumer_secret = $consumer_secret;
+
+        $this->oauth_token = $oauth_token;
+        $this->oauth_token_secret = $oauth_token_secret;
     }
 
     public function _urlencode_rfc3986($input)
@@ -61,6 +67,26 @@ class OAuth
         return array('code' => $code, 'response' => $response);
     }
 
+    public function buildParams($url, $method, $twitter_params)
+    {
+        $nonce = sha1('nonce' + time());
+        $auth_params = array(
+                    'oauth_nonce' => $nonce,
+                    'oauth_signature_method' => 'HMAC-SHA1',
+                    'oauth_timestamp' => time(),
+                    'oauth_consumer_key' => $this->consumer_key,
+                    'oauth_token' => $this->oauth_token,
+                    'oauth_version' => '1.0',
+                  );
+
+        $all_params = array_merge($auth_params, $twitter_params);
+
+        $signature = $this->buildSignature($this->consumer_secret . '&' . $this->oauth_token_secret, $method, $url, $all_params);
+        $auth_params['oauth_signature'] = $signature;
+
+        return $auth_params;
+    }
+
     public function buildSignature($secret, $method, $url, $params)
     {
         $str = $method . '&';
@@ -95,6 +121,15 @@ class OAuth
         $str = implode($args, ',');
 
         return('OAuth ' . $str);
+    }
+
+    public function buildAuthorization($url, $method, $twitter_params)
+    {
+        $params = $this->buildParams($url, $method, $twitter_params);
+
+        $auth_str = $this->makeAuthorization($params);
+
+        return $auth_str;
     }
 
     public function parseTokens($str)

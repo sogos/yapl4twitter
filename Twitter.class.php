@@ -4,51 +4,17 @@ require_once 'OAuth.class.php';
 
 class Twitter
 {
-    private $consumer_key = NULL;
-    private $consumer_secret = NULL;
-
-    private $oauth_token = NULL;
-    private $oauth_token_secret = NULL;
-
     public function Twitter($consumer_key, $consumer_secret, $oauth_token, $oauth_token_secret)
     {
-        $this->consumer_key = $consumer_key;
-        $this->consumer_secret = $consumer_secret;
-
-        $this->oauth_token = $oauth_token;
-        $this->oauth_token_secret = $oauth_token_secret;
-    }
-
-    public function buildParams($url, $method, $twitter_params)
-    {
-        $oa = new OAuth($this->consumer_key, $this->consumer_secret);
-        $nonce = sha1('nonce' + time());
-        $auth_params = array(
-                    'oauth_nonce' => $nonce,
-                    'oauth_signature_method' => 'HMAC-SHA1',
-                    'oauth_timestamp' => time(),
-                    'oauth_consumer_key' => $this->consumer_key,
-                    'oauth_token' => $this->oauth_token,
-                    'oauth_version' => '1.0',
-                  );
-
-        $all_params = array_merge($auth_params, $twitter_params);
-
-        $signature = $oa->buildSignature($this->consumer_secret . '&' . $this->oauth_token_secret, $method, $url, $all_params);
-        $auth_params['oauth_signature'] = $signature;
-
-        return array($auth_params, $all_params);
+        $this->oa = new OAuth($consumer_key, $consumer_secret, $oauth_token, $oauth_token_secret);
     }
 
     public function request($url, $method, $twitter_params)
     {
-        $oa = new OAuth($this->consumer_key, $this->consumer_secret);
-        list($auth_params, $all_params) = $this->buildParams($url, $method, $twitter_params);
-
-        $auth_header = $oa->makeAuthorization($auth_params);
+        $auth_header = $this->oa->buildAuthorization($url, $method, $twitter_params);
 
         $request = $url . '?' . http_build_query($twitter_params, '', '&');
-        $ret = $oa->request( $request, $method, NULL, $auth_header );
+        $ret = $this->oa->request( $request, $method, NULL, $auth_header );
 
         return $ret;
     }
@@ -66,10 +32,8 @@ class Twitter
         }
 
         $url = $cnx_params['scheme'] . '://' . $cnx_params['host'] . $cnx_params['query'];
-        list($auth_params, $all_params) = $this->buildParams($url, $method, $cnx_params['args']);
 
-        $oa = new OAuth($this->consumer_key, $this->consumer_secret);
-        $auth_header = $oa->makeAuthorization($auth_params);
+        $auth_header = $this->oa->buildAuthorization($url, $method, $cnx_params['args']);
 
         // Riped from Phirehose: http://code.google.com/p/phirehose/
         $ip = gethostbynamel($cnx_params['host']);

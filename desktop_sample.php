@@ -32,6 +32,10 @@ $fp = fopen('php://stdin', 'r');
 $pin = trim(fgets($fp));
 
 $access_token = $oa->getAccessToken($access_token_url, $request_token['oauth_token'], $pin);
+
+echo "Result:\n";
+print_r($access_token);
+
 /*
 array(4) {
   ["oauth_token"]=>
