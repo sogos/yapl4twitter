@@ -16,6 +16,7 @@ class OAuth
          return str_replace('+',' ',str_replace('%7E', '~', rawurlencode($input)));
     }
 
+    /* $headers should be renamed as "auth_header" */
     public function request($url, $method = 'GET', $post_params = NULL, $headers = NULL)
     {
         $ch = curl_init();
@@ -41,9 +42,9 @@ class OAuth
             $http_headers[] = 'Content-Type: application/x-www-form-urlencoded';
         }
 
-        if(NULL !== $headers && is_array($headers))
+        if(NULL !== $headers)
         {
-            $http_headers = array_merge($http_headers, $headers);
+            $http_headers[] = $headers;
         }
 
         if(count($http_headers))
@@ -92,9 +93,9 @@ class OAuth
             $args[] = $this->_urlencode_rfc3986( $key ). '="' . $this->_urlencode_rfc3986($value) . '"';
         }
 
-        $str = implode($args, ', ');
+        $str = implode($args, ',');
 
-        return(array('Authorization: OAuth ' . $str . "\n"));
+        return('Authorization: OAuth ' . $str);
     }
 
     public function parseTokens($str)
