@@ -4,6 +4,10 @@ require_once 'OAuth.class.php';
 
 class Twitter
 {
+    const API_URL = 'http://api.twitter.com';
+    const STREAM_URL = 'http://stream.twitter.com';
+    const USERSTREAM_URL = 'https://userstream.twitter.com';
+
     public function Twitter($consumer_key, $consumer_secret, $oauth_token, $oauth_token_secret)
     {
         $this->oa = new OAuth($consumer_key, $consumer_secret, $oauth_token, $oauth_token_secret);
@@ -89,9 +93,31 @@ class Twitter
         fclose($fd);
     }
 
+    /* Timeline ressources */
+
+    public function statuses_public_timeline($trim_user = FALSE, $include_entities = FALSE)
+    {
+        $url = Twitter::API_URL . "/1/statuses/public_timeline.json";
+        $method = 'GET';
+
+        $rep = $this->request( $url, $method, array('trim_user' => $trim_user, 'include_entities' => $include_entities) );
+
+        return $rep;
+    }
+
+    public function statuses_home_timeline()
+    {
+        $url = Twitter::API_URL . "/1/statuses/home_timeline.json";
+        $method = 'GET';
+
+        $rep = $this->request( $url, $method, array() );
+
+        return $rep;
+    }
+
     public function user_timeline()
     {
-        $url = 'http://api.twitter.com/1/statuses/user_timeline.json';
+        $url = Twitter::API_URL . "/1/statuses/user_timeline.json";
         $method = 'GET';
 
         $rep = $this->request( $url, $method, array() );
@@ -101,7 +127,7 @@ class Twitter
 
     public function update($message)
     {
-        $url = 'http://api.twitter.com/1/statuses/update.json';
+        $url = Twitter::API_URL . "/1/statuses/update.json";
         $method = 'POST';
 
         $twitter_params = array('status' => $message);
@@ -113,7 +139,7 @@ class Twitter
 
     public function users_show($user_id)
     {
-        $url = 'http://api.twitter.com/1/users/show.json';
+        $url = Twitter::API_URL . "/1/users/show.json";
         $method = 'GET';
 
         $twitter_params = array('user_id' => $user_id);
@@ -125,7 +151,7 @@ class Twitter
 
     public function follow($screen_name)
     {
-        $url = 'http://api.twitter.com/1/friendships/create.json';
+        $url = Twitter::API_URL . "/1/friendships/create.json";
         $method = 'POST';
 
         $twitter_params = array('screen_name' => $screen_name);
@@ -137,7 +163,7 @@ class Twitter
 
     public function unfollow($user_id)
     {
-        $url = 'http://api.twitter.com/1/friendships/destroy.json';
+        $url = Twitter::API_URL . "/1/friendships/destroy.json";
         $method = 'POST';
 
         $twitter_params = array('user_id' => $user_id);
@@ -149,7 +175,7 @@ class Twitter
 
     public function get_friends($screen_name)
     {
-        $url = 'http://api.twitter.com/1/friends/ids.json';
+        $url = Twitter::API_URL . "/1/friends/ids.json";
         $method = 'GET';
 
         $twitter_params = array('screen_name' => $screen_name);
@@ -161,7 +187,7 @@ class Twitter
 
     public function get_list_members($screen_name, $list_slug, $cursor = -1)
     {
-        $url = 'http://api.twitter.com/1/' . $screen_name . '/' . $list_slug . '/members.json';
+        $url = Twitter::API_URL . "/1/" . $screen_name . "/" . $list_slug . "/members.json";
         $method = 'GET';
 
         $twitter_params = array('cursor' => $cursor);
@@ -173,7 +199,7 @@ class Twitter
 
     public function getFirehoseSample()
     {
-        $url = 'http://stream.twitter.com/1/statuses/sample.json';
+        $url = Twitter::STREAM_URL . "/1/statuses/sample.json";
 
         $params = array(
                         'scheme' => 'http',
@@ -190,16 +216,24 @@ class Twitter
 
     public function getUserStream()
     {
-        $url = 'https://userstream.twitter.com/2/user.json';
+        $url = Twitter::USERSTREAM_URL . "/2/user.json";
 
-        $fd = $this->getStreamSocket(array('scheme' => 'https', 'host' => 'userstream.twitter.com', 'port' => 443, 'method' => 'GET', 'query' => '/2/user.json'));
+        $params = array(
+                        'scheme' => 'https',
+                        'host' => 'userstream.twitter.com',
+                        'port' => 443,
+                        'method' => 'GET',
+                        'query' => '/2/user.json'
+                       );
+
+        $fd = $this->getStreamSocket($params);
 
         return $fd;
     }
 
     public function getFirehoseFilter($filters)
     {
-        $url = 'http://stream.twitter.com/1/statuses/filter.json';
+        $url = Twitter::STREAM_URL . "/1/statuses/filter.json";
 
         $params = array(
                         'scheme' => 'http',
@@ -214,5 +248,4 @@ class Twitter
 
         return $fd;
     }
-
 };
