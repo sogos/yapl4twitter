@@ -47,7 +47,8 @@ class Twitter
 
         $auth_header = $oa->makeAuthorization($auth_params);
 
-        $ret = $oa->request( $url . '?' . http_build_query($twitter_params, '', '&'), $method, NULL, $auth_header );
+        $request = $url . '?' . http_build_query($twitter_params, '', '&');
+        $ret = $oa->request( $request, $method, NULL, $auth_header );
 
         return $ret;
     }
@@ -59,6 +60,11 @@ class Twitter
 
         $scheme = ($cnx_params['scheme'] == 'http') ? 'tcp://' : 'ssl://';
 
+        if(FALSE == array_key_exists('args', $cnx_params))
+        {
+            $cnx_params['args'] = array();
+        }
+
         $url = $cnx_params['scheme'] . '://' . $cnx_params['host'] . $cnx_params['query'];
         list($auth_params, $all_params) = $this->buildParams($url, $method, $cnx_params['args']);
 
@@ -69,14 +75,11 @@ class Twitter
         $ip = gethostbynamel($cnx_params['host']);
         $ip = $ip[rand(0, (count($ip) - 1))];
 
+        $is_post = FALSE;
         if($cnx_params['method'] == 'POST')
         {
             $is_post = TRUE;
             $post_data = http_build_query($cnx_params['args']);
-        }
-        else
-        {
-            $is_port = FALSE;
         }
 
         $fp = fsockopen($scheme . $ip, $cnx_params['port'], $errno, $errstr, 5);
@@ -89,7 +92,7 @@ class Twitter
             $query.= "Content-length: " . (strlen($post_data)) . "\r\n";
         }
         $query.= "Accept: */*\r\n";
-        $query.= $auth_header . "\r\n";
+        $query.= "Authorization: " . $auth_header . "\r\n";
         $query.= "User-Agent: Node authentication\r\n";
         $query.= "\r\n";
 
