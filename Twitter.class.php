@@ -5,6 +5,7 @@ require_once 'OAuth.class.php';
 class Twitter
 {
     const API_URL = 'http://api.twitter.com';
+    const SEARCH_URL = 'http://search.twitter.com';
     const STREAM_URL = 'http://stream.twitter.com';
     const USERSTREAM_URL = 'https://userstream.twitter.com';
 
@@ -121,6 +122,20 @@ class Twitter
         $method = 'GET';
 
         $rep = $this->request( $url, $method, array() );
+
+        return $rep;
+    }
+
+    /* */
+    public function search($q, $opt_params = array())
+    {
+        $url = Twitter::SEARCH_URL . "/search.json";
+        $method = 'GET';
+
+        $params = array( 'q' => $q );
+        $params = array_merge( $params, $opt_params );
+
+        $rep = $this->request( $url, $method, $params );
 
         return $rep;
     }
