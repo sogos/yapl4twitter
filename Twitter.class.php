@@ -49,6 +49,8 @@ class Twitter
         {
             $is_post = TRUE;
             $post_data = http_build_query($cnx_params['args']);
+            /* Fix spaces (We want %20, not '+'). */
+            $post_data = str_replace('+', '%20', $post_data);
         }
 
         $fp = fsockopen($scheme . $ip, $cnx_params['port'], $errno, $errstr, 5);
@@ -126,7 +128,34 @@ class Twitter
         return $rep;
     }
 
-    /* */
+    /* Trends */
+    public function trends()
+    {
+        $url = Twitter::API_URL . "/1/trends.json";
+        $method = 'GET';
+
+        $rep = $this->request( $url, $method, array() );
+
+        return $rep;
+    }
+
+    public function trends_current($exclude_hash = FALSE)
+    {
+        $url = Twitter::API_URL . "/1/trends/current.json";
+        $method = 'GET';
+
+        $params = array();
+        if(TRUE == $exclude_hash)
+        {
+            $params['exclude'] = 'hashtags';
+        }
+
+        $rep = $this->request( $url, $method, $params );
+
+        return $rep;
+    }
+
+    /* Search */
     public function search($q, $opt_params = array())
     {
         $url = Twitter::SEARCH_URL . "/search.json";
