@@ -17,7 +17,7 @@ $cs_secret = 'qSms4bOFVK3JdEXCrViFQ[...]';
 
 Run index.php through CLI (because the callback url si 'oob', as it was a desktop client. You can put a valid url, but you'll have to create your own scripts to handle authentification.):
 
-$ php index.php
+$ php desktop_sample.php
 You must go on https://api.twitter.com/oauth/authorize?oauth_token=rKWDVy8rDQSuE0n914FicpIpey5TMYGbNW7urDzwOVw
 Please give PIN number: 0236794
 

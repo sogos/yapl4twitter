@@ -146,7 +146,7 @@ class OAuth
 
     public function getRequestToken($request_token_url, $callback_url = NULL)
     {
-        $method = 'GET';
+        $method = 'POST';
         $nonce = sha1('nonce' + time());
         $params = array(
                     'oauth_consumer_key' => $this->consumer_key,
@@ -156,16 +156,19 @@ class OAuth
                     'oauth_version' => '1.0',
                   );
 
+        $request_params = array();
+
         if(NULL !== $callback_url)
         {
             $params['oauth_callback'] = $callback_url;
+            $request_params['oauth_callback'] = $callback_url;
         }
 
         $signature = $this->buildSignature($this->consumer_secret . '&', $method, $request_token_url, $params);
 
         $params['oauth_signature'] = $signature;
 
-        $rep_arr = $this->request($request_token_url, $method, NULL, $this->makeAuthorization($params));
+        $rep_arr = $this->request($request_token_url, $method, $request_params, $this->makeAuthorization($params));
         $rep = $rep_arr['response'];
 
         return $this->parseTokens( $rep );
@@ -173,7 +176,7 @@ class OAuth
 
     public function getAccessToken($access_token_url, $oauth_token, $oauth_verifier)
     {
-        $method = 'GET';
+        $method = 'POST';
 
         $nonce = sha1('nonce' + time());
         $params = array(
