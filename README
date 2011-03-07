@@ -1,7 +1,7 @@
 Use:
 
-$ git clone git://github.com/mycroft/YeyAnotherTwitterPhpLib.git
-Cloning into YeyAnotherTwitterPhpLib...
+$ git clone git://github.com/mycroft/yapl4twitter.git
+Cloning into yapl4twitter...
 remote: Counting objects: 19, done.
 remote: Compressing objects: 100% (18/18), done.
 remote: Total 19 (delta 8), reused 0 (delta 0)
