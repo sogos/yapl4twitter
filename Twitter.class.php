@@ -241,6 +241,31 @@ class Twitter
         return $rep;
     }
 
+    public function get_followers_ids($screen_name, $cursor = -1)
+    {
+        $url = Twitter::API_URL . "/1/followers/ids.json";
+        $method = 'GET';
+
+        $twitter_params = array('cursor' => $cursor);
+        $twitter_params['screen_name'] = $screen_name;
+
+        $rep = $this->request( $url, $method, $twitter_params );
+
+        return $rep;
+    }
+
+    public function get_users_lookup($user_list)
+    {
+        $url = Twitter::API_URL . "/1/users/lookup.json";
+        $method = 'GET';
+
+        $twitter_params = array('user_id' => $user_list);
+
+        $rep = $this->request( $url, $method, $twitter_params );
+
+        return $rep;
+    }
+
     public function getFirehoseSample()
     {
         $url = Twitter::STREAM_URL . "/1/statuses/sample.json";
